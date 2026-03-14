@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-backend
+  labels:
+    app: weather-backend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: weather-backend
+
+  template:
+    metadata:
+      labels:
+        app: weather-backend
+
+    spec:
+      containers:
+      - name: backend
+        image: rahul4475/weather_backend:latest
+
+        ports:
+        - containerPort: 5000
+
+        env:
+        - name: OPENWEATHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: weather-api-secret
+              key: OPENWEATHER_API_KEY
+
+        - name: CITY
+          valueFrom:
+            configMapKeyRef:
+              name: weather-config
+              key: CITY
+
+        - name: UNITS
+          valueFrom:
+            configMapKeyRef:
+              name: weather-config
+              key: UNITS
+
+        livenessProbe:
+          httpGet:
+            path: /weather
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 20
+
+        readinessProbe:
+          httpGet:
+            path: /weather
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+
+spec:
+  selector:
+    app: weather-backend
+
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+
+  type: ClusterIP

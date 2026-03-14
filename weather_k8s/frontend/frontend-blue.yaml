@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-blue
+  labels:
+    app: weather-frontend
+    version: blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: weather-frontend
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: weather-frontend
+        version: blue
+    spec:
+      containers:
+      - name: frontend
+        image: rahul4475/weather-frontend:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: weather-frontend
+    version: blue  # change to green later for traffic switch
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
