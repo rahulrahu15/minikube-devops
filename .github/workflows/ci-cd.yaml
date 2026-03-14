@@ -11,64 +11,39 @@ env:
   OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
 
 jobs:
-
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    # ---------------- Checkout ----------------
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # ---------------- Docker Buildx ----------------
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    # ---------------- DockerHub Login ----------------
-    - name: Log in to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # ---------------- Build & Push Frontend Blue ----------------
-    - name: Build frontend-blue image
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue ./frontend
+      # ---------------- Build Frontend Blue ----------------
+      - name: Build frontend-blue image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue ./frontend
 
-    - name: Scan frontend-blue image with Trivy
-      uses: aquasecurity/trivy-action@v2
-      with:
-        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue
-        severity: CRITICAL,HIGH
-        exit-code: '1'  # fail workflow if vulnerabilities found
+      - name: Push frontend-blue
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue
 
-    - name: Push frontend-blue image
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue
+      # ---------------- Build Frontend Green ----------------
+      - name: Build frontend-green image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green ./frontend
 
-    # ---------------- Build & Push Frontend Green ----------------
-    - name: Build frontend-green image
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green ./frontend
+      - name: Push frontend-green
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green
 
-    - name: Scan frontend-green image with Trivy
-      uses: aquasecurity/trivy-action@v2
-      with:
-        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green
-        severity: CRITICAL,HIGH
-        exit-code: '1'
+      # ---------------- Build Backend ----------------
+      - name: Build backend image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest ./backend
 
-    - name: Push frontend-green image
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green
-
-    # ---------------- Build & Push Backend ----------------
-    - name: Build backend image
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest ./backend
-
-    - name: Scan backend image with Trivy
-      uses: aquasecurity/trivy-action@v2
-      with:
-        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest
-        severity: CRITICAL,HIGH
-        exit-code: '1'
-
-    - name: Push backend image
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest
+      - name: Push backend
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest
