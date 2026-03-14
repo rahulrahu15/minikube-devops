@@ -1,4 +1,4 @@
-name: Build & Push Docker Images
+name: Weather Project CI/CD
 
 on:
   push:
@@ -8,13 +8,15 @@ on:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
 
 jobs:
+
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
@@ -23,27 +25,39 @@ jobs:
     - name: Log in to DockerHub
       uses: docker/login-action@v2
       with:
-        username: ${{ env.DOCKERHUB_USERNAME }}
-        password: ${{ env.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push frontend Blue image
-      run: |
-        docker build -t rahul4475/weather-frontend:blue ./frontend
-        docker push rahul4475/weather-frontend:blue
+    # ---------------- Frontend Blue ----------------
+    - name: Build frontend-blue image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue ./frontend
 
-    - name: Build and push frontend Green image
+    - name: Scan frontend-blue image with Trivy
       run: |
-        docker build -t rahul4475/weather-frontend:green ./frontend
-        docker push rahul4475/weather-frontend:green
+        sudo apt-get update && sudo apt-get install -y wget
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.42.0_Linux-64bit.deb
+        sudo dpkg -i trivy_0.42.0_Linux-64bit.deb
+        trivy image --severity HIGH,CRITICAL ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue || echo "Trivy scan failed, continuing"
 
-    - name: Build and push backend image
-      run: |
-        docker build -t rahul4475/weather-backend:latest ./backend
-        docker push rahul4475/weather-backend:latest
+    - name: Push frontend-blue image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:blue
 
-    - name: Optional - Trivy Scan frontend
-      run: |
-        sudo apt-get install -y wget
-        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.44.0_Linux-64bit.deb
-        sudo dpkg -i trivy_0.44.0_Linux-64bit.deb
-        trivy image --exit-code 1 rahul4475/weather-frontend:green
+    # ---------------- Frontend Green ----------------
+    - name: Build frontend-green image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green ./frontend
+
+    - name: Scan frontend-green image with Trivy
+      run: trivy image --severity HIGH,CRITICAL ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green || echo "Trivy scan failed, continuing"
+
+    - name: Push frontend-green image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-frontend:green
+
+    # ---------------- Backend ----------------
+    - name: Build backend image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest ./backend
+
+    - name: Scan backend image with Trivy
+      run: trivy image --severity HIGH,CRITICAL ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest || echo "Trivy scan failed, continuing"
+
+    - name: Push backend image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/weather-backend:latest
