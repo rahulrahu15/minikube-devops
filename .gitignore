@@ -1,0 +1,26 @@
+# Python virtual environment
+backend/venv/
+__pycache__/
+*.pyc
+
+# Node / frontend (if any local build)
+node_modules/
+dist/
+build/
+
+# Docker artifacts
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor settings
+.vscode/
+.idea/
+
+# Kubernetes generated files
+*.swp
+# docker-compose
+.env
