@@ -1,0 +1,11 @@
+kubelet:
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    interval: 15s
+    scheme: http
+
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 15s
+    serviceMonitorSelector: {}

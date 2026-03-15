@@ -1,0 +1,8 @@
+kubelet:
+  enabled: true
+  namespace: ""        # scrape all namespaces
+  metricsPath: /metrics/cadvisor
+  scheme: http
+
+kubeStateMetrics:
+  enabled: true
