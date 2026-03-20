@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/rahulrahu15/minikube-devops.git'  # Replace with your repo
     targetRevision: main
-    path: weather_project/frontend
+    path: weather_k8s/frontend
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
