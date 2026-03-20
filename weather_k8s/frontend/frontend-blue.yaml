@@ -22,17 +22,4 @@ spec:
         image: rahul4475/weather-frontend:latest
         ports:
         - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  selector:
-    app: weather-frontend
-    version: blue  # change to green later for traffic switch
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: NodePort
+
