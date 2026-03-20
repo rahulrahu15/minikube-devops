@@ -22,4 +22,9 @@ spec:
         image: rahul4475/weather-frontend:green  # DockerHub production-like image
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "500m"
 
