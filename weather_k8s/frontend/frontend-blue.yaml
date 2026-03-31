@@ -7,7 +7,7 @@ metadata:
     version: blue
 spec:
     selector:
-    matchLabels:
+     matchLabels:
       app: weather-frontend
       version: blue
   template:
