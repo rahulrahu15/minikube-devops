@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: weather-frontend
-    version: green # change this between blue/green to switch traffic
+    version: blue # change this between blue/green to switch traffic
   ports:
   - protocol: TCP
     port: 80
