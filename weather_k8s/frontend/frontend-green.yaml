@@ -6,13 +6,8 @@ metadata:
     app: weather-frontend
     version: green
 spec:
-<<<<<<< HEAD
-    selector:
-     matchLabels:
-=======
   selector:
     matchLabels:
->>>>>>> f260988 (removed replica)
       app: weather-frontend
       version: green
   template:
@@ -23,7 +18,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: rahul4475/weather-frontend:green  # DockerHub production-like image
+        image: rahul4475/weather-frontend:green
         ports:
         - containerPort: 80
         resources:
@@ -31,4 +26,3 @@ spec:
             cpu: "100m"
           limits:
             cpu: "500m"
-
