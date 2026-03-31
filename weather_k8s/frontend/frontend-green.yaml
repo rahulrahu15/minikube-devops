@@ -6,8 +6,13 @@ metadata:
     app: weather-frontend
     version: green
 spec:
+<<<<<<< HEAD
     selector:
      matchLabels:
+=======
+  selector:
+    matchLabels:
+>>>>>>> f260988 (removed replica)
       app: weather-frontend
       version: green
   template:
