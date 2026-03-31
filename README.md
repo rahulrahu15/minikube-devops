@@ -7,22 +7,29 @@
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus\&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana\&logoColor=white)
 
-A **production-style DevOps project** demonstrating containerization, Kubernetes orchestration, GitOps deployments, Blue-Green strategy, autoscaling, and full observability.
+Designed and implemented a production-style cloud-native microservices platform using Kubernetes, incorporating GitOps-based continuous delivery, Blue-Green deployments, autoscaling, and full observability.
+
+The system automates the complete DevOps lifecycle — from container build and registry push using CI pipelines to declarative deployment and synchronization using Argo CD — ensuring zero manual intervention and consistent cluster state management.
 
 ---
 
 # 1. Project Overview
 
-The **Kubernetes Weather Microservices Platform** is a cloud-native microservices application that retrieves real-time weather data from the OpenWeather API.
+The Kubernetes Weather Microservices Platform is a cloud-native application designed to simulate a real-world DevOps production environment.
 
-The project demonstrates a **complete DevOps lifecycle**, including:
+This project demonstrates:
 
-* Containerized microservices
-* Kubernetes-based orchestration
-* CI/CD automation
-* Blue-Green deployments
-* Horizontal Pod Autoscaling
-* Observability using Prometheus and Grafana
+* End-to-end CI/CD automation
+* GitOps-based deployments using ArgoCD
+* Blue-Green deployment strategy for zero-downtime releases
+* Horizontal Pod Autoscaling for dynamic scaling
+* Observability stack with Prometheus and Grafana
+
+👉 The system ensures:
+
+* Fully automated deployments
+* Zero manual cluster intervention
+* High availability and scalability
 
 ---
 
@@ -71,7 +78,7 @@ Prometheus (metrics collection)
       ▼
 Grafana (visualization dashboards)
 ```
-
+ArgoCD continuously monitors the Git repository and reconciles the Kubernetes cluster state with the desired configuration, ensuring Git remains the single source of truth.
 ---
 
 # 3. Tech Stack
@@ -169,7 +176,7 @@ Monitoring
 
 # 6. Blue-Green Deployment Strategy
 
-Blue-Green deployment allows safe production releases by maintaining two application environments.
+Blue-Green deployment allows safe production releases by maintaining two application environments. Traffic switching between Blue and Green environments is managed declaratively via Kubernetes Service selectors. In a GitOps workflow, this switching is triggered by updating configuration in Git, which is automatically applied to the cluster by ArgoCD.
 
 Blue Environment
 Current production version.
@@ -244,7 +251,7 @@ Observed results:
 
 # 9. CI/CD Pipeline
 
-Continuous Integration is implemented using **GitHub Actions**.
+Continuous Integration is implemented using **GitHub Actions**. Continuous Delivery is implemented using a GitOps model, where ArgoCD automatically applies Kubernetes manifests from the Git repository instead of manual kubectl operations.
 
 Workflow:
 
@@ -444,10 +451,10 @@ http://weather.local
 
 Possible enhancements:
 
-* Canary deployments
-* Kubernetes Secrets for API keys
-* Centralized logging with ELK stack
-* Cloud deployment (AWS / GCP)
+* Canary deployments using Istio
+* GitOps rollback strategies using ArgoCD
+* Deployment on managed Kubernetes (EKS/GKE)
+* Centralized logging using ELK stack
 
 ---
 
